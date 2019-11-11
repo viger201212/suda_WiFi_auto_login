@@ -29,3 +29,7 @@
 
 * **Linux**:
 编辑~/.bashrc, 在文件末尾添加`/usr/bin/python3 */suda_WIFI_auto_login.py` 将路劲修改为你存脚本的绝对路径即可
+
+## todo
+[x] 优化循环判断
+[ ] Android 兼容
