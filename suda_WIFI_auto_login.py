@@ -26,8 +26,15 @@ data = {'username': username,
         'password': base64.b64encode(password),
         'enablemacauth': '0'}
 r = requests.request("post", "http://1d.suda.edu.cn/index.php/index/login", headers=headers, data=data)
-while r.status_code != 200:
-    time.sleep(10000)
-    logging.debug("login failed, retrying")
-    r = requests.request("post", "http://1d.suda.edu.cn/index.php/index/login", headers=headers, data=data)
-print(r.json()["info"])
+while True:
+    if r.status_code == 200:
+        print(r.json()["info"])
+        break
+        # 当访问网关成功时, 输出登录情况, 退出程序
+    else:
+        time.sleep(1000)
+        r = requests.request("post", "http://1d.suda.edu.cn/index.php/index/login", headers=headers, data=data)
+        logging.debug("请连接到suda_WiFi, 一秒后自动重试")
+        # 访问网关失败时, 等待一秒后重试
+
+input("Press enter to exit ;)")
