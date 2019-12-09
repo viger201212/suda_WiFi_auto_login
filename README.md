@@ -13,7 +13,7 @@
  ***
 #### 使用说明
   * 下载suda_WIFI_auto_login.py. 对于Linux,可能需要赋予权限`chmod a+x ./suda_WIFI_auto_login.py`
-  * 首次运行, 编辑suda_WIFI_auto_login.py文件, 在 username 和 password 处填入你想登录的苏大WiFi账号. 对于移动宽带账户, 请填入宽带账号密码并修改 method 为 2 或 3.
+  * 首次运行, 编辑config.json文件, 在 username 和 password 处填入你想登录的苏大WiFi账号. 对于移动宽带账户, 请填入宽带账号密码并修改 method 为 2 或 3.填入登录的方式. 1 为校园网; 2 为中国移动; 3 为中国移动测试.
   * 使用Python解释器运行suda_WIFI_auto_login.py. 在终端或脚本中执行
   
   `python ./suda_WIFI_auto_login.py`
