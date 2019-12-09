@@ -40,8 +40,14 @@ if __name__ == "__main__":
     while True:
         r = requests.request("post", "http://1d.suda.edu.cn/index.php/index/login", headers=headers, data=data)
         if r.status_code == 200:
-            print(r.json()["info"])
-            break
+            try:
+                print(r.json()["info"])
+                break
+            except Exception as e:
+                time.sleep(1)
+                logging.debug("请连接到suda_WiFi, 一秒后自动重试")
+                continue
+
             # 当访问网关成功时, 输出登录情况, 退出程序
         else:
             time.sleep(1)
