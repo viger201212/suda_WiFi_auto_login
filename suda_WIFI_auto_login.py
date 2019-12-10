@@ -36,7 +36,7 @@ if __name__ == "__main__":
     data = {'username': username,
             'domain': domain[method],
             'password': base64.b64encode(password),
-            'enablemacauth': '0'}
+            'enablemacauth': '1'}
     while True:
         r = requests.request("post", "http://1d.suda.edu.cn/index.php/index/login", headers=headers, data=data)
         if r.status_code == 200:
