@@ -3,6 +3,12 @@ import json
 import logging
 import time
 from typing import Dict
+import socket
+pcname = socket.getfqdn(socket.gethostname( ))
+pcip = socket.gethostbyname(pcname)
+pcip = socket.gethostbyname_ex(pcname)[2][1]
+
+print(pcip)
 
 import requests
 
@@ -10,40 +16,36 @@ if __name__ == "__main__":
     logging.basicConfig(level=logging.DEBUG)
 
     # config area
-    # baseurl = "1d.suda.edu.cn"
+    # baseurl = "http://a.suda.edu.cn:801/eportal/?c=Portal&a=login&callback=dr1004&login_method=1&user_account=%2C0%2C1827406006&user_password=llhw201212&wlan_user_ip=10.70.87.222&wlan_user_ipv6=&wlan_user_mac=000000000000&wlan_ac_ip=221.178.234.23&wlan_ac_name=&jsVersion=3.3.3&v=6050"
     with open('config.json') as fp:
         config = json.load(fp=fp)
-    password = bytes(config["password"], encoding="utf-8")
+    password = config["password"]
     username = config["username"]
     method = config["method"]
 
     domain: Dict[str, str] = {"1": "", "2": "cmcc-suzhou", "3": "CMCC"}
-    headers = {'Host': '1d.suda.edu.cn',
-               'Proxy-Connection': 'keep-alive',
-               'Content-Length': '73',
-               'Accept': 'application/json, text/javascript, */*; q=0.01',
-               'Origin': 'http://1d.suda.edu.cn',
-               'Connection': 'keep-alive',
-               'X-Requested-With': 'XMLHttpRequest',
-               'User-Agent': 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) '
-                             'Chrome/80.0.3956.0 Safari/537.36 Edg/80.0.328.0',
-               'DNT': '1',
-               'Content-Type': 'application/x-www-form-urlencoded',
-               'Referer': 'http://1d.suda.edu.cn/',
-               'Accept-Encoding': 'gzip, deflate',
-               'Accept-Language': 'zh-CN,zh;q=0.9,en;q=0.8,en-GB;q=0.7,en-US;q=0.6',
-               'Cookie': 'sunriseUsername=; sunriseDomain=campus; think_language=zh-CN; PHPSESSID='}
-    data = {'username': username,
-            'domain': domain[method],
-            'password': base64.b64encode(password),
-            'enablemacauth': '1'}
+    headers = {}
+    print(
+        "http://10.9.1.3:801/eportal/?c=Portal&a=login&callback=dr1004&login_method={0}&user_account={1}&user_password={2}&wlan_user_ip={3}&wlan_user_ipv6=&wlan_user_mac=000000000000&wlan_ac_ip=221.178.234.23&wlan_ac_name=&jsVersion=3.3.3&v=6050".format(
+            method, username, password, pcip))
+
     while True:
-        r = requests.request("post", "http://1d.suda.edu.cn/index.php/index/login", headers=headers, data=data)
+        r = requests.request("post", "http://10.9.1.3:801/eportal/?c=Portal&a=login&callback=dr1004&login_method={0}&user_account={1}&user_password={2}&wlan_user_ip={3}&wlan_user_ipv6=&wlan_user_mac=000000000000&wlan_ac_ip=221.178.234.23&wlan_ac_name=&jsVersion=3.3.3&v=6050".format(method, username, password, pcip), headers=headers)
         if r.status_code == 200:
             try:
-                print(r.json()["info"])
+                response = r.content.decode("utf-8")
+                response = response.replace("dr1004(", "")
+                response = response.replace(")", "")
+                print(response)
+                r = json.loads(response)
+                if r["result"] != "1":
+                    print(r["msg"])
+                    print(r["ret_code"])
+                    break
+                print(r["msg"])
                 break
             except Exception as e:
+                print(e)
                 time.sleep(1)
                 logging.debug("请连接到suda_WiFi, 一秒后自动重试")
                 continue
