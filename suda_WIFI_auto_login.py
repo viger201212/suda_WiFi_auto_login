@@ -16,27 +16,26 @@ if __name__ == "__main__":
     logging.basicConfig(level=logging.DEBUG)
 
     # config area
-    # baseurl = "http://a.suda.edu.cn:801/eportal/?c=Portal&a=login&callback=dr1004&login_method=1&user_account=%2C0%2C1827406006&user_password=llhw201212&wlan_user_ip=10.70.87.222&wlan_user_ipv6=&wlan_user_mac=000000000000&wlan_ac_ip=221.178.234.23&wlan_ac_name=&jsVersion=3.3.3&v=6050"
+    # baseurl = "http://10.9.1.3:801/eportal/?c=Portal&a=login&callback=dr1004&login_method=1&user_account=%2C0%2C1827406006&user_password=llhw201212&wlan_user_ip=10.70.87.222&wlan_user_ipv6=&wlan_user_mac=000000000000&wlan_ac_ip=221.178.234.23&wlan_ac_name=&jsVersion=3.3.3&v=6050"
     with open('config.json') as fp:
         config = json.load(fp=fp)
     password = config["password"]
     username = config["username"]
     method = config["method"]
 
-    domain: Dict[str, str] = {"1": "", "2": "cmcc-suzhou", "3": "CMCC"}
+    domain: Dict[str, str] = {"1": "1", "2": "cmcc-suzhou", "3": "CMCC"}
     headers = {}
-    print(
-        "http://10.9.1.3:801/eportal/?c=Portal&a=login&callback=dr1004&login_method={0}&user_account={1}&user_password={2}&wlan_user_ip={3}&wlan_user_ipv6=&wlan_user_mac=000000000000&wlan_ac_ip=221.178.234.23&wlan_ac_name=&jsVersion=3.3.3&v=6050".format(
-            method, username, password, pcip))
+    if method == "3":
+        username = username + "@zgyd"
 
     while True:
-        r = requests.request("post", "http://10.9.1.3:801/eportal/?c=Portal&a=login&callback=dr1004&login_method={0}&user_account={1}&user_password={2}&wlan_user_ip={3}&wlan_user_ipv6=&wlan_user_mac=000000000000&wlan_ac_ip=221.178.234.23&wlan_ac_name=&jsVersion=3.3.3&v=6050".format(method, username, password, pcip), headers=headers)
+        r = requests.request("get", "http://10.9.1.3:801/eportal/?c=Portal&a=login&callback=dr1003&login_method=1&user_account={1}&user_password={2}&wlan_user_ip={3}&wlan_user_ipv6=&wlan_user_mac=000000000000&wlan_ac_ip=&wlan_ac_name=&jsVersion=3.3.3&v=7546".format(method, username, password, "000.000.000.000"), headers=headers)
         if r.status_code == 200:
             try:
                 response = r.content.decode("utf-8")
-                response = response.replace("dr1004(", "")
+                response = response.replace("dr1003(", "")
                 response = response.replace(")", "")
-                print(response)
+                # print(response)
                 r = json.loads(response)
                 if r["result"] != "1":
                     print(r["msg"])
